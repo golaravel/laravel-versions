@@ -137,6 +137,6 @@ module.exports = function(grunt) {
     'exec:git_export_versions', 
     'exec:composer',
     'zip_directories', 
-    'ftp-push']);
+    'ftp_push']);
 
 };
