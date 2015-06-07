@@ -1,10 +1,12 @@
 var handlebars = require('handlebars');
 var _ = require('lodash');
 var semver = require('semver');
+var fs = require('fs');
 
 /*global module:false*/
 module.exports = function(grunt) {
 
+  var DOWNLOAD_PREFIX = 'http://down.golaravel.com/laravel/';
   var tags;
 
   // Project configuration.
@@ -18,7 +20,7 @@ module.exports = function(grunt) {
       ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
     // Task configuration.
     exec: {
-      composer_sefupdate: {
+      composer_selfupdate: {
         cmd: 'composer selfupdate',
         stdout: false,
         stderr: false
@@ -114,7 +116,7 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'laravel',
-          src: ['*.zip']
+          src: ['*.zip', 'laravel-*.js']
         }
         ]
       }
@@ -132,12 +134,32 @@ module.exports = function(grunt) {
   // Default task.
   grunt.registerTask('default', [
     'clean', 
-    'composer_sefupdate',
+    'exec:composer_sefupdate',
     'exec:git_clone', 
     'exec:git_tag_list', 
     'exec:git_export_versions', 
     'exec:composer',
     'zip_directories', 
-    'ftp_push']);
+    'version_list',
+    'ftp_push'
+  ]);
+
+  grunt.registerTask('test', ['exec:git_tag_list', 'version-list']);
+
+  grunt.registerTask('version_list', 'save all laravel zips\' url to a json file', function(){
+    var versions;
+
+    versions = _.map(tags, function(tag){
+      var states = fs.statSync('laravel/laravel-' + tag + '.zip');
+
+      return {
+        version: tag,
+        download_url: DOWNLOAD_PREFIX + 'laravel-' +  tag + '.zip',
+        size: states.size
+      };
+    });
+
+    grunt.file.write('laravel/laravel-versions.js', 'listLaravelVersions(' + JSON.stringify(versions) + ');');
+  });
 
 };
