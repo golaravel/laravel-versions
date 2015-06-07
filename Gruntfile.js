@@ -121,6 +121,49 @@ module.exports = function(grunt) {
         ]
       }
         
+    },
+    replace: {
+      dist: {
+        options: {
+          patterns: [
+            {
+              match: /<html lang="en(-US)?">/ig,
+              replacement: '<html lang="zh-CN">'
+            },
+            //v4
+            {
+              match: /@import url\(\/\/fonts.googleapis.com\/css\?family=.*\);/ig,
+              replacement: ''
+            },
+
+            //v5
+            {
+              match: /<link href='\/\/fonts.googleapis.com\/css\?family=.*' rel='stylesheet' type='text\/css'>/ig,
+              replacement: ''
+            },
+            {
+              match: /<script src="https:\/\/oss.maxcdn.com\/html5shiv\/(\d\.\d\.\d)\/html5shiv.min.js"><\/script>/ig,
+              replacement: '<script src="http://cdn.bootcss.com/html5shiv/$1/html5shiv.min.js"></script>'
+            },
+            {
+              match: /<script src="https:\/\/oss.maxcdn.com\/respond\/(\d\.\d\.\d)\/respond.min.js"><\/script>/ig,
+              replacement: '<script src="http://cdn.bootcss.com/respond.js/$1/respond.min.js"></script>'
+            },
+            {
+              match: /\/\/cdnjs.cloudflare.com\/ajax\/libs/ig,
+              replacement: 'http://cdn.bootcss.com'
+            },
+            {
+              match: /twitter-bootstrap/ig,
+              replacement: 'bootstrap'
+            }
+          ]
+        },
+        files: [
+          {expand: true, cwd: 'laravel', src: ['laravel-*/resources/views/**/*.blade.php'], dest: 'laravel'},
+          {expand: true, cwd: 'laravel', src: ['laravel-*/app/views/**/*.php'], dest: 'laravel'}
+        ]
+      }
     }
   });
 
@@ -130,6 +173,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-zip-directories');
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-ftp-push-fullpath');
+  grunt.loadNpmTasks('grunt-replace');
 
   // Default task.
   grunt.registerTask('default', [
@@ -138,6 +182,7 @@ module.exports = function(grunt) {
     'exec:git_clone', 
     'exec:git_tag_list', 
     'exec:git_export_versions', 
+    'replace',
     'exec:composer',
     'zip_directories', 
     'version_list',
