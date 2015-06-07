@@ -135,8 +135,8 @@ module.exports = function(grunt) {
     'exec:git_clone', 
     'exec:git_tag_list', 
     'exec:git_export_versions', 
-    /*'exec:composer',*/ 
+    'exec:composer',
     'zip_directories', 
-    'ftp-deploy']);
+    'ftp-push']);
 
 };
