@@ -132,6 +132,7 @@ module.exports = function(grunt) {
   // Default task.
   grunt.registerTask('default', [
     'clean', 
+    'composer_sefupdate',
     'exec:git_clone', 
     'exec:git_tag_list', 
     'exec:git_export_versions', 
