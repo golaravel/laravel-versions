@@ -2,7 +2,9 @@ var handlebars = require('handlebars');
 var _ = require('lodash');
 var semver = require('semver');
 var fs = require('fs');
-var moment = require('moment').locale('zh-cn');
+var moment = require('moment');
+
+moment.locale('zh-cn');
 
 /*global module:false*/
 module.exports = function(grunt) {
