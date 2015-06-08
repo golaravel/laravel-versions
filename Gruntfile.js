@@ -10,7 +10,8 @@ moment.locale('zh-cn');
 module.exports = function(grunt) {
 
   var DOWNLOAD_PREFIX = 'http://down.golaravel.com/laravel/';
-  var tags;
+  var laravel-tags;
+  var lumen-tags;
 
   // Project configuration.
   grunt.initConfig({
@@ -28,12 +29,12 @@ module.exports = function(grunt) {
         stdout: false,
         stderr: false
       },
-      git_clone: {
+      clone_laravel: {
         cmd: 'git clone https://github.com/laravel/laravel --depth=1 --no-single-branch -q',
         stdout: false,
         stderr: false
       },
-      git_tag_list: {
+      list_laravel_tags: {
         cmd: 'git tag --list',
         cwd: './laravel',
         callback: function(err, stdout, stderr) {
@@ -41,7 +42,7 @@ module.exports = function(grunt) {
             grunt.fail.fatal('git tag failed!');
           }
 
-          tags = stdout.toString().trim().split('\n').filter(function(tag){
+          var tags = stdout.toString().trim().split('\n').filter(function(tag){
             if(/^v3/.test(tag)) {
               return false;
             } 
@@ -59,14 +60,17 @@ module.exports = function(grunt) {
           tags.push('master');
 
           console.log(tags);
+
+          laravel-tags = tags;
         },
         stdout: false,
         stderr: false
       },
-      git_export_versions: {
+      export_laravel_versions: {
         cmd: function() {
           var template = '{{#tags}}git archive --format=tar --prefix=laravel-{{this}}/ {{this}} | tar xf - && {{/tags}}';
           var cmd;
+          var tags = laravel-tags;
 
           template = handlebars.compile(template);
           cmd = template({tags: tags}).replace(/&&\s*$/g, '');
@@ -78,12 +82,12 @@ module.exports = function(grunt) {
         stdout: false,
         stderr: false
       },
-      composer: {
+      laravel_composer_install: {
         cmd: function(){
           var cwd = process.cwd();
-          // var template = '{{#tags}}(cd {{../cwd}}/{{this}} && composer install) && {{/tags}}';
           var template = '{{#tags}}(echo {{this}} && composer install -d laravel-{{this}}) && {{/tags}}';
           var cmd;
+          var tags = lumen-tags;
 
           template = handlebars.compile(template);
           cmd = template({tags: tags, cwd: cwd}).replace(/&&\s*$/g, '');
@@ -92,6 +96,74 @@ module.exports = function(grunt) {
           return cmd;
         },
         cwd: 'laravel',
+        stdout: false,
+        stderr: false
+      },
+
+
+      clone_lumen: {
+        cmd: 'git clone https://github.com/laravel/lumen --depth=1 --no-single-branch -q',
+        stdout: false,
+        stderr: false
+      },
+      list_lumen_tags: {
+        cmd: 'git tag --list',
+        cwd: './lumen',
+        callback: function(err, stdout, stderr) {
+          if(stderr.length > 0) {
+            grunt.fail.fatal('git tag failed!');
+          }
+
+          var tags = stdout.toString().trim().split('\n').filter(function(tag){
+            return true;
+          });
+
+          tags = _.chain(tags).groupBy(function(ver){
+            return [semver.major(ver), semver.minor(ver)].join('.');
+          }).map(function(group){
+            console.log(_.last(group));
+            return _.last(group);
+          }).value();
+
+          tags.push('master');
+
+          console.log(tags);
+
+          lumen-tags = tags;
+        },
+        stdout: false,
+        stderr: false
+      },
+      export_lumen_versions: {
+        cmd: function() {
+          var template = '{{#tags}}git archive --format=tar --prefix=lumen-{{this}}/ {{this}} | tar xf - && {{/tags}}';
+          var cmd;
+          var tags = lumen-tags;
+
+          template = handlebars.compile(template);
+          cmd = template({tags: tags}).replace(/&&\s*$/g, '');
+
+          console.log(cmd);
+          return cmd;
+        },
+        cwd: 'lumen',
+        stdout: false,
+        stderr: false
+      },
+      lumen_composer_install: {
+        cmd: function(){
+          var cwd = process.cwd();
+          var template = '{{#tags}}(echo {{this}} && composer install -d lumen-{{this}}) && {{/tags}}';
+          var cmd;
+          var tags = lumen-tags;
+
+          template = handlebars.compile(template);
+          cmd = template({tags: tags, cwd: cwd}).replace(/&&\s*$/g, '');
+
+          console.log(cmd);
+          return cmd;
+        },
+        cwd: 'lumen',
         stdout: false,
         stderr: false
       }
@@ -105,6 +177,13 @@ module.exports = function(grunt) {
           cwd: './laravel',
           src: ['laravel-*'],
           dest: './laravel'
+        },
+        {
+          filter: 'isDirectory',
+          expand: true,
+          cwd: './lumen',
+          src: ['lumen-*'],
+          dest: './lumen'
         }
         ]
       }
@@ -120,6 +199,11 @@ module.exports = function(grunt) {
           expand: true,
           cwd: 'laravel',
           src: ['*.zip', 'laravel-*.json']
+        },
+        {
+          expand: true,
+          cwd: 'lumen',
+          src: ['*.zip']
         }
         ]
       }
@@ -196,9 +280,10 @@ module.exports = function(grunt) {
 
   grunt.registerTask('version_list', 'save all laravel  & lumen zips\' url to a json file', function(){
     var laravels;
+    var lumens;
     var now = moment().format('LLL');
 
-    laravels = _.map(tags, function(tag){
+    laravels = _.map(laravel-tags, function(tag){
       var states = fs.statSync('laravel/laravel-' + tag + '.zip');
 
       return {
@@ -208,7 +293,17 @@ module.exports = function(grunt) {
       };
     }).reverse();
 
-    grunt.file.write('laravel/laravel-versions.json', 'listLaravelVersions(' + JSON.stringify({time: now, laravels: laravels}) + ');');
+    lumens = _.map(lumen-tags, function(tag){
+      var states = fs.statSync('lumen/lumen-' + tag + '.zip');
+
+      return {
+        version: tag,
+        download_url: DOWNLOAD_PREFIX + 'lumen-' +  tag + '.zip',
+        size: states.size
+      };
+    }).reverse();
+
+    grunt.file.write('laravel/laravel-versions.json', 'listLaravelVersions(' + JSON.stringify({time: now, laravels: laravels, lumens: lumens}) + ');');
   });
 
 };
