@@ -168,7 +168,7 @@ module.exports = function(grunt) {
         stderr: false
       }
     },
-    clean: ['laravel'],
+    clean: ['laravel', 'lumen'],
     zip_directories: {
       versions: {
         files: [{
