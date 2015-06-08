@@ -9,7 +9,7 @@ moment.locale('zh-cn');
 /*global module:false*/
 module.exports = function(grunt) {
 
-  var DOWNLOAD_PREFIX = 'http://down.golaravel.com/laravel/';
+  var DOWNLOAD_PREFIX = 'http://down.golaravel.com/';
   var laravel_tags;
   var lumen_tags;
 
@@ -295,7 +295,7 @@ module.exports = function(grunt) {
 
       return {
         version: tag,
-        download_url: DOWNLOAD_PREFIX + 'laravel-' +  tag + '.zip',
+        download_url: DOWNLOAD_PREFIX + 'laravel/laravel-' +  tag + '.zip',
         size: states.size
       };
     }).reverse();
@@ -305,7 +305,7 @@ module.exports = function(grunt) {
 
       return {
         version: tag,
-        download_url: DOWNLOAD_PREFIX + 'lumen-' +  tag + '.zip',
+        download_url: DOWNLOAD_PREFIX + 'lumen/lumen-' +  tag + '.zip',
         size: states.size
       };
     }).reverse();
