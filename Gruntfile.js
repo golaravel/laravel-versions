@@ -2,6 +2,7 @@ var handlebars = require('handlebars');
 var _ = require('lodash');
 var semver = require('semver');
 var fs = require('fs');
+var moment = require('moment').locale('zh-cn');
 
 /*global module:false*/
 module.exports = function(grunt) {
@@ -191,10 +192,11 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['exec:git_tag_list', 'version-list']);
 
-  grunt.registerTask('version_list', 'save all laravel zips\' url to a json file', function(){
-    var versions;
+  grunt.registerTask('version_list', 'save all laravel  & lumen zips\' url to a json file', function(){
+    var laravels;
+    var now = moment().format('LLL');
 
-    versions = _.map(tags, function(tag){
+    laravels = _.map(tags, function(tag){
       var states = fs.statSync('laravel/laravel-' + tag + '.zip');
 
       return {
@@ -204,7 +206,7 @@ module.exports = function(grunt) {
       };
     });
 
-    grunt.file.write('laravel/laravel-versions.js', 'listLaravelVersions(' + JSON.stringify(versions) + ');');
+    grunt.file.write('laravel/laravel-versions.js', 'listLaravelVersions(' + JSON.stringify({time: now, laravels: laravels}) + ');');
   });
 
 };
