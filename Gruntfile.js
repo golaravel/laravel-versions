@@ -119,7 +119,7 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'laravel',
-          src: ['*.zip', 'laravel-*.js']
+          src: ['*.zip', 'laravel-*.json']
         }
         ]
       }
@@ -208,7 +208,7 @@ module.exports = function(grunt) {
       };
     });
 
-    grunt.file.write('laravel/laravel-versions.js', 'listLaravelVersions(' + JSON.stringify({time: now, laravels: laravels}) + ');');
+    grunt.file.write('laravel/laravel-versions.json', 'listLaravelVersions(' + JSON.stringify({time: now, laravels: laravels}) + ');');
   });
 
 };
