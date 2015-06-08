@@ -206,7 +206,7 @@ module.exports = function(grunt) {
         download_url: DOWNLOAD_PREFIX + 'laravel-' +  tag + '.zip',
         size: states.size
       };
-    });
+    }).reverse();
 
     grunt.file.write('laravel/laravel-versions.json', 'listLaravelVersions(' + JSON.stringify({time: now, laravels: laravels}) + ');');
   });
