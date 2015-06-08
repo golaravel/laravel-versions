@@ -266,11 +266,18 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     'clean', 
     'exec:composer_selfupdate',
-    'exec:git_clone', 
-    'exec:git_tag_list', 
-    'exec:git_export_versions', 
+    'exec:clone_laravel', 
+    'exec:list_laravel_tags', 
+    'exec:export_laravel_versions', 
+
+    'exec:clone_lumen', 
+    'exec:list_lumen_tags', 
+    'exec:export_lumen_versions', 
+
     'replace',
-    'exec:composer',
+    'exec:laravel_composer_install',
+    'exec:lumen_composer_install',
+    
     'zip_directories', 
     'version_list',
     'ftp_push'
