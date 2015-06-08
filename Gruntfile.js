@@ -10,8 +10,8 @@ moment.locale('zh-cn');
 module.exports = function(grunt) {
 
   var DOWNLOAD_PREFIX = 'http://down.golaravel.com/laravel/';
-  var laravel-tags;
-  var lumen-tags;
+  var laravel_tags;
+  var lumen_tags;
 
   // Project configuration.
   grunt.initConfig({
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
 
           console.log(tags);
 
-          laravel-tags = tags;
+          laravel_tags = tags;
         },
         stdout: false,
         stderr: false
@@ -70,7 +70,7 @@ module.exports = function(grunt) {
         cmd: function() {
           var template = '{{#tags}}git archive --format=tar --prefix=laravel-{{this}}/ {{this}} | tar xf - && {{/tags}}';
           var cmd;
-          var tags = laravel-tags;
+          var tags = laravel_tags;
 
           template = handlebars.compile(template);
           cmd = template({tags: tags}).replace(/&&\s*$/g, '');
@@ -87,7 +87,7 @@ module.exports = function(grunt) {
           var cwd = process.cwd();
           var template = '{{#tags}}(echo {{this}} && composer install -d laravel-{{this}}) && {{/tags}}';
           var cmd;
-          var tags = lumen-tags;
+          var tags = lumen_tags;
 
           template = handlebars.compile(template);
           cmd = template({tags: tags, cwd: cwd}).replace(/&&\s*$/g, '');
@@ -129,7 +129,7 @@ module.exports = function(grunt) {
 
           console.log(tags);
 
-          lumen-tags = tags;
+          lumen_tags = tags;
         },
         stdout: false,
         stderr: false
@@ -138,7 +138,7 @@ module.exports = function(grunt) {
         cmd: function() {
           var template = '{{#tags}}git archive --format=tar --prefix=lumen-{{this}}/ {{this}} | tar xf - && {{/tags}}';
           var cmd;
-          var tags = lumen-tags;
+          var tags = lumen_tags;
 
           template = handlebars.compile(template);
           cmd = template({tags: tags}).replace(/&&\s*$/g, '');
@@ -155,7 +155,7 @@ module.exports = function(grunt) {
           var cwd = process.cwd();
           var template = '{{#tags}}(echo {{this}} && composer install -d lumen-{{this}}) && {{/tags}}';
           var cmd;
-          var tags = lumen-tags;
+          var tags = lumen_tags;
 
           template = handlebars.compile(template);
           cmd = template({tags: tags, cwd: cwd}).replace(/&&\s*$/g, '');
@@ -283,7 +283,7 @@ module.exports = function(grunt) {
     var lumens;
     var now = moment().format('LLL');
 
-    laravels = _.map(laravel-tags, function(tag){
+    laravels = _.map(laravel_tags, function(tag){
       var states = fs.statSync('laravel/laravel-' + tag + '.zip');
 
       return {
@@ -293,7 +293,7 @@ module.exports = function(grunt) {
       };
     }).reverse();
 
-    lumens = _.map(lumen-tags, function(tag){
+    lumens = _.map(lumen_tags, function(tag){
       var states = fs.statSync('lumen/lumen-' + tag + '.zip');
 
       return {
