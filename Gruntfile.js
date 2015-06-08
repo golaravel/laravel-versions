@@ -87,7 +87,7 @@ module.exports = function(grunt) {
           var cwd = process.cwd();
           var template = '{{#tags}}(echo {{this}} && composer install -d laravel-{{this}}) && {{/tags}}';
           var cmd;
-          var tags = lumen_tags;
+          var tags = laravel_tags;
 
           template = handlebars.compile(template);
           cmd = template({tags: tags, cwd: cwd}).replace(/&&\s*$/g, '');
@@ -277,7 +277,7 @@ module.exports = function(grunt) {
     'replace',
     'exec:laravel_composer_install',
     'exec:lumen_composer_install',
-    
+
     'zip_directories', 
     'version_list',
     'ftp_push'
