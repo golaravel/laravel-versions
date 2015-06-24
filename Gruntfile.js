@@ -166,6 +166,41 @@ module.exports = function(grunt) {
         cwd: 'lumen',
         stdout: false,
         stderr: false
+      },
+
+      zip_lumen: {
+      	cmd: function(){
+          var cwd = process.cwd();
+          var template = '{{#tags}}(echo {{this}} && zip -q -r lumen-{{this}}).zip lumen-{{this}} && {{/tags}}';
+          var cmd;
+          var tags = lumen_tags;
+
+          template = handlebars.compile(template);
+          cmd = template({tags: tags, cwd: cwd}).replace(/&&\s*$/g, '');
+
+          console.log(cmd);
+          return cmd;
+        },
+        cwd: 'lumen',
+        stdout: false,
+        stderr: false
+      },
+      zip_laravel: {
+      	cmd: function(){
+          var cwd = process.cwd();
+          var template = '{{#tags}}(echo {{this}} && zip -q -r laravel-{{this}}).zip laravel-{{this}} && {{/tags}}';
+          var cmd;
+          var tags = laravel_tags;
+
+          template = handlebars.compile(template);
+          cmd = template({tags: tags, cwd: cwd}).replace(/&&\s*$/g, '');
+
+          console.log(cmd);
+          return cmd;
+        },
+        cwd: 'laravel',
+        stdout: false,
+        stderr: false
       }
     },
     clean: ['laravel', 'lumen'],
@@ -278,7 +313,8 @@ module.exports = function(grunt) {
     'exec:laravel_composer_install',
     'exec:lumen_composer_install',
 
-    'zip_directories', 
+    'exec:zip_laravel',
+    'exec:zip_lumen',
     'version_list',
     'ftp_push'
   ]);
