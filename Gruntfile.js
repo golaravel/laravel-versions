@@ -85,7 +85,7 @@ module.exports = function(grunt) {
       laravel_composer_install: {
         cmd: function(){
           var cwd = process.cwd();
-          var template = '{{#tags}}(cd {{cwd}}/{{this}} && composer install && ' +
+          var template = '{{#tags}}(cd {{../cwd}}/laravel/laravel-{{this}} && composer install && ' +
             'composer run-script post-root-package-install && ' +
             'composer run-script post-install-cmd && ' +
             'composer run-script post-create-project-cmd) && {{/tags}}';
@@ -156,7 +156,7 @@ module.exports = function(grunt) {
       lumen_composer_install: {
         cmd: function(){
           var cwd = process.cwd();
-          var template = '{{#tags}}(cd {{cwd}}/{{this}} && composer install && ' +
+          var template = '{{#tags}}(cd {{../cwd}}/lumen/lumen-{{this}} && composer install && ' +
             'composer run-script post-root-package-install && ' +
             'composer run-script post-install-cmd && ' +
             'composer run-script post-create-project-cmd) && {{/tags}}';
