@@ -262,7 +262,7 @@ module.exports = function(grunt) {
 
             //v5
             {
-              match: /<link href='\/\/fonts.googleapis.com\/css\?family=.*' rel='stylesheet' type='text\/css'>/ig,
+              match: /<link.*fonts.googleapis.com.*>/ig,
               replacement: ''
             },
             {
