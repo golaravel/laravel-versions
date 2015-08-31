@@ -53,8 +53,11 @@ module.exports = function(grunt) {
           tags = _.chain(tags).groupBy(function(ver){
             return [semver.major(ver), semver.minor(ver)].join('.');
           }).map(function(group){
-            console.log(_.last(group));
-            return _.last(group);
+            return _.reduce(group, function(result, ver){
+              if(semver.gt(result, ver)) return result;
+
+              return ver;
+            });
           }).value();
 
           tags.push('master');
@@ -122,8 +125,11 @@ module.exports = function(grunt) {
           tags = _.chain(tags).groupBy(function(ver){
             return [semver.major(ver), semver.minor(ver)].join('.');
           }).map(function(group){
-            console.log(_.last(group));
-            return _.last(group);
+            return _.reduce(group, function(result, ver){
+              if(semver.gt(result, ver)) return result;
+
+              return ver;
+            }); 
           }).value();
 
           tags.push('master');
